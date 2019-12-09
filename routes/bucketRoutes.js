@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const requireLogin = require("../middlewares/requireLogin");
-const requireCredits = require("../middlewares/requireCredits");
+// const requireLogin = require("../middlewares/requireLogin");
+// const requireCredits = require("../middlewares/requireCredits");
 const Mailer = require("../services/Mailer");
 const bucketEmailTemplate = require("../services/emailTemplates/bucketEmailTemplate");
 
@@ -11,17 +11,17 @@ module.exports = app => {
     res.send("Thanks for responding!");
   });
   //check if user is logged in and has enough credits to create a new bucket (custom middlewares)
-  app.post("/api/buckets", requireLogin, requireCredits, async (req, res) => {
+  app.post("/api/buckets", async (req, res) => {
+    console.log("bucketRoutes print req.user: ", req.user);
     const { title, subject, body, recipients } = req.body;
 
     //creating new instance of a bucket
-    //TESTING EMAIL: required properties; will error if inconsistent (fileInBucket not working; prob syntax error)
+    //ERROR HERE: req.user is undefined, so req.user.id doesnt work as intended.
     const bucket = new Bucket({
       title,
       body,
       subject,
       recipients: recipients.split(",").map(email => ({ email: email.trim() })),
-      // fileInBucket: fileInBucket.map(filename => ({ filename })),
       _user: req.user.id,
       dateSent: Date.now(),
     });
