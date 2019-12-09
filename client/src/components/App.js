@@ -2,14 +2,12 @@ import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../actions";
+import BucketNew from "./buckets/BucketNew";
 
 import Header from "./Header";
 import Landing from "./Landing";
 
-const Dashboard = () => (
-  <h2>User Dashboard goes here with User Auth and Cookie once Signed In </h2>
-);
-const BucketNew = () => <h2>Creating a New Bucket - BucketNew</h2>;
+import Dashboard from "./Dashboard";
 
 class App extends Component {
   componentDidMount() {

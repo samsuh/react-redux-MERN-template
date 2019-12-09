@@ -27,7 +27,6 @@ module.exports = app => {
     });
 
     // send email from bucket here; giving it the entire bucket
-    // deciding what to show email recipient; send them filename for now
     const mailer = new Mailer(bucket, bucketEmailTemplate(bucket));
 
     try {
