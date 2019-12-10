@@ -21,6 +21,10 @@ const BucketFormReview = ({ onCancel, formValues, submitBucket, history }) => {
       <h5>Please review and submit.</h5>
       {reviewFields}
       <p>(Note: Credit will be deducted upon successful submission)</p>
+      <p className="red-text">
+        {" "}
+        "Confirm Submit" Not Working; loses 'user.id', actively debugging
+      </p>
       <button
         className="yellow darken-3 white-text btn-flat"
         onClick={onCancel}
