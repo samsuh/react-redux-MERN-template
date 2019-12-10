@@ -11,6 +11,7 @@ module.exports = app => {
     res.send("Thanks for responding!");
   });
   //check if user is logged in and has enough credits to create a new bucket (custom middlewares)
+  // app.post("/api/buckets", requireLogin, requireCredits, async (req, res) => {
   app.post("/api/buckets", async (req, res) => {
     console.log("bucketRoutes print req.user: ", req.user);
     const { title, subject, body, recipients } = req.body;

@@ -3,9 +3,10 @@ import _ from "lodash";
 import React from "react";
 import { connect } from "react-redux";
 import formFields from "./formFields";
+import { withRouter } from "react-router-dom";
 import * as actions from "../../actions";
 
-const BucketFormReview = ({ onCancel, formValues, submitBucket }) => {
+const BucketFormReview = ({ onCancel, formValues, submitBucket, history }) => {
   const reviewFields = _.map(formFields, ({ name, label }) => {
     return (
       <div key={name}>
@@ -28,7 +29,7 @@ const BucketFormReview = ({ onCancel, formValues, submitBucket }) => {
       </button>
       <button
         className="green btn-flat right white-text"
-        onClick={() => submitBucket(formValues)}
+        onClick={() => submitBucket(formValues, history)}
       >
         Confirm Submit <i className="material-icons right">send</i>
       </button>
@@ -37,7 +38,8 @@ const BucketFormReview = ({ onCancel, formValues, submitBucket }) => {
 };
 
 function mapStateToProps(state) {
+  console.log("from BucketFormReview logging state object:", state);
   return { formValues: state.form.bucketForm.values };
 }
 
-export default connect(mapStateToProps, actions)(BucketFormReview);
+export default connect(mapStateToProps, actions)(withRouter(BucketFormReview));

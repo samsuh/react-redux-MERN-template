@@ -29,6 +29,10 @@ class Header extends Component {
     }
   }
   render() {
+    console.log(
+      "Header component render function this.props.auth: ",
+      this.props.auth
+    );
     return (
       <nav>
         <div className="nav-wrapper">

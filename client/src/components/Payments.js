@@ -10,7 +10,8 @@ class Payments extends Component {
         name="Archon Cloud"
         description="$5 for 5 Archon Credits"
         amount={500}
-        token={token => this.props.handleToken(token)}
+        // token={token => this.props.handleToken(token)}
+        token={token => console.log(token)}
         stripeKey={process.env.REACT_APP_STRIPE_KEY}
       >
         <button className="btn">Add Credits</button>
