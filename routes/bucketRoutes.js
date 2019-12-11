@@ -1,31 +1,66 @@
-//BUG: bucketRoutes doesnt get req.user properly. something is broken inside this file; possibly the Mailer object does not send back a response.
+const _ = require("lodash");
+const Path = require("path-parser").default;
+const { URL } = require("url");
 const mongoose = require("mongoose");
-// const requireLogin = require("../middlewares/requireLogin");
-// const requireCredits = require("../middlewares/requireCredits");
+const requireLogin = require("../middlewares/requireLogin");
+const requireCredits = require("../middlewares/requireCredits");
 const Mailer = require("../services/Mailer");
 const bucketEmailTemplate = require("../services/emailTemplates/bucketEmailTemplate");
 
 const Bucket = mongoose.model("buckets");
 
 module.exports = app => {
-  app.get("/api/buckets/thanks", (req, res) => {
+  app.get("/api/buckets", requireLogin, async (req, res) => {
+    const buckets = await Bucket.find({ _user: req.user.id }).select({
+      recipients: false,
+    });
+    res.send(buckets);
+  });
+
+  app.get("/api/buckets/:bucketId/:choice", (req, res) => {
     res.send("Thanks for responding!");
   });
-  // undid code to check if user is logged in and has enough credits to create a new bucket (custom middlewares). put it back before finished.
-  // app.post("/api/buckets", requireLogin, requireCredits, async (req, res) => {
-  app.post("/api/buckets", async (req, res) => {
-    console.log(
-      "DOES NOT WORK, returns undefined: bucketRoutes print req.user: ",
-      req.user
-    );
-    console.log(
-      "DOES NOT WORK, returns undefined: bucketRoutes print req.body.user: ",
-      req.body.user
-    );
+
+  app.post("/api/buckets/webhooks", (req, res) => {
+    const p = new Path("/api/buckets/:bucketId/:choice");
+    //this is a chain of lodash events that cleans data from the array of responses,
+    //and runs mongoose query to find and update relevant entry in mongodb.
+    //note: mongo uses _id as id.
+    //.exec() executes the query.
+    _.chain(req.body)
+      .map(({ email, url }) => {
+        const match = p.test(new URL(url).pathname);
+        if (match) {
+          return { email, bucketId: match.bucketId, choice: match.choice };
+        }
+      })
+      .compact()
+      .uniqBy("email", "bucketId")
+      .each(({ bucketId, email, choice }) => {
+        Bucket.updateOne(
+          {
+            _id: bucketId,
+            recipients: {
+              $elemMatch: { email: email, responded: false },
+            },
+          },
+          {
+            $inc: { [choice]: 1 },
+            $set: { "recipients.$.responded": true },
+            lastUpdated: new Date(),
+          }
+        ).exec();
+      })
+      .value();
+
+    //res.send just making sure sendgrid stops repeatedly pinging thinking it failed.
+    res.send({});
+  });
+
+  app.post("/api/buckets", requireLogin, requireCredits, async (req, res) => {
     const { title, subject, body, recipients } = req.body;
 
     //creating new instance of a bucket
-    //ERROR HERE: req.user is undefined, so req.user.id doesnt work as intended.
     const bucket = new Bucket({
       title,
       body,

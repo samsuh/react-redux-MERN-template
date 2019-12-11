@@ -10,8 +10,8 @@ module.exports = bucket => {
 <p>Are you satisfied with Archon?</p>
 <p>${bucket.body}</p>
   <div>
-  <a href="${keys.redirectDomain}/api/buckets/thanks">Yes</a>
-  <a href="${keys.redirectDomain}/api/buckets/thanks">No</a>
+  <a href="${keys.redirectDomain}/api/buckets/${bucket.id}/yes">Yes</a>
+  <a href="${keys.redirectDomain}/api/buckets/${bucket.id}/no">No</a>
 </div>
 </body>
 </html>  

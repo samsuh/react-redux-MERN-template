@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import BucketList from "./buckets/BucketList";
 
 const Dashboard = () => {
   return (
     <div>
-      Dashboard
+      <BucketList />
       <div className="fixed-action-btn">
         <Link
           to="/buckets/new"
