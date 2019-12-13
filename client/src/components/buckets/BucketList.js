@@ -14,9 +14,7 @@ class BucketList extends Component {
           <div className="card-content black-text">
             <span className="card-title">{bucket.title}</span>
             <p>
-              I am a very simple card. I am good at containing small bits of
-              information. I am convenient because I require little markup to
-              use effectively.
+              {bucket.body}
             </p>
             <p className="right">
               Created On: {new Date(bucket.dateSent).toLocaleDateString()}
